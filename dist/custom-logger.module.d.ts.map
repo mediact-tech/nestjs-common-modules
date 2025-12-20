@@ -1,0 +1,1 @@
+{"version":3,"file":"custom-logger.module.d.ts","sourceRoot":"","sources":["../src/custom-logger.module.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAA4B,MAAM,gBAAgB,CAAA;AAExE,OAAO,EAAE,mBAAmB,EAAE,wBAAwB,EAAE,MAAM,uCAAuC,CAAA;AAGrG,qBAEa,kBAAkB;IAa7B,MAAM,CAAC,OAAO,CAAC,OAAO,GAAE,mBAAwB,GAAG,aAAa;IA6BhE,MAAM,CAAC,YAAY,CAAC,YAAY,EAAE,wBAAwB,GAAG,aAAa;CAc3E"}

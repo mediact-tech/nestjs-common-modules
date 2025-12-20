@@ -1,0 +1,74 @@
+{
+  "name": "nestjs-common-modules",
+  "version": "1.1.1",
+  "description": "A strict, production-ready logging module for NestJS applications with Fastify, built on Pino",
+  "author": "",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mediact-Tech/nestjs-common-modules.git"
+  },
+  "keywords": [
+    "nestjs",
+    "logger",
+    "pino",
+    "fastify",
+    "logging",
+    "correlation-id",
+    "structured-logging"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "@nestjs/swagger": "^11.2.3",
+    "axios": "^1.13.2",
+    "fastify": "^5.6.2",
+    "pino": "^10.1.0"
+  },
+  "peerDependenciesMeta": {
+    "axios": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@nestjs/axios": "^4.0.1",
+    "class-transformer": "^0.5.1",
+    "fastify-plugin": "^5.0.1"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "@nestjs/swagger": "^11.2.3",
+    "@types/node": "^20.0.0",
+    "axios": "^1.7.0",
+    "class-validator": "^0.14.2",
+    "eslint": "^9.0.0",
+    "fastify": "^5.0.0",
+    "pino": "^10.1.0",
+    "pino-pretty": "^13.1.2",
+    "prettier": "^3.0.0",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.0",
+    "typescript": "^5.0.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0"
+  }
+}
