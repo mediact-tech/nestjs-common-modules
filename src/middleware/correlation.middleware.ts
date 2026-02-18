@@ -9,6 +9,7 @@ import { randomUUID } from 'crypto'
 export interface RequestContext {
   correlationId: string
   userId?: string
+  requestTimestamp: number
 }
 
 /**
@@ -63,7 +64,7 @@ export const correlationMiddleware = fp(
     fastify.addHook('onRequest', (req: FastifyRequest, reply: FastifyReply, done) => {
       const correlationId = (req.headers[CORRELATION_ID_HEADER] as string) || randomUUID()
 
-      asyncLocalStorage.run({ correlationId }, () => {
+      asyncLocalStorage.run({ correlationId, requestTimestamp: Date.now() }, () => {
         // Set correlation ID in request headers for downstream use
         req.headers[CORRELATION_ID_HEADER] = correlationId
         // Also set in response headers for client tracking
@@ -78,10 +79,11 @@ export const correlationMiddleware = fp(
  * Internal function used by CustomLogger to get context
  * This is not exported in the public API
  */
-export function _getLoggerContext(): { correlationId?: string; userId?: string } {
+export function _getLoggerContext(): { correlationId?: string; userId?: string; requestTimestamp?: number } {
   const store = asyncLocalStorage.getStore()
   return {
     correlationId: store?.correlationId,
     userId: store?.userId,
+    requestTimestamp: store?.requestTimestamp,
   }
 }

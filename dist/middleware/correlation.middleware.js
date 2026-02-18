@@ -32,7 +32,7 @@ exports.CORRELATION_ID_HEADER = 'x-correlation-id';
 exports.correlationMiddleware = (0, fastify_plugin_1.default)((fastify) => {
     fastify.addHook('onRequest', (req, reply, done) => {
         const correlationId = req.headers[exports.CORRELATION_ID_HEADER] || (0, crypto_1.randomUUID)();
-        asyncLocalStorage.run({ correlationId }, () => {
+        asyncLocalStorage.run({ correlationId, requestTimestamp: Date.now() }, () => {
             req.headers[exports.CORRELATION_ID_HEADER] = correlationId;
             reply.header(exports.CORRELATION_ID_HEADER, correlationId);
             done();
@@ -44,6 +44,7 @@ function _getLoggerContext() {
     return {
         correlationId: store?.correlationId,
         userId: store?.userId,
+        requestTimestamp: store?.requestTimestamp,
     };
 }
 //# sourceMappingURL=correlation.middleware.js.map

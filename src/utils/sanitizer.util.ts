@@ -16,7 +16,7 @@ const DEFAULT_SENSITIVE_FIELDS = [
 ]
 
 const DEFAULT_MASK_PATTERN = '[REDACTED]'
-const DEFAULT_MAX_BODY_LENGTH = 2048
+const DEFAULT_MAX_BODY_LENGTH = 4096
 
 /**
  * Safely stringify an object, handling circular references

@@ -82,7 +82,7 @@ export class CustomLogger implements LoggerService {
    * Get context from the built-in correlation middleware
    * This is enforced by the module - no custom provider allowed
    */
-  private getContext(): { correlationId?: string; userId?: string } {
+  private getContext(): { correlationId?: string; userId?: string; requestTimestamp?: number } {
     return _getLoggerContext()
   }
 
@@ -101,6 +101,7 @@ export class CustomLogger implements LoggerService {
     if (request.url.includes('health-check')) return new LogModel()
 
     const ctx = this.getContext()
+    const latencyMs = ctx.requestTimestamp ? Date.now() - ctx.requestTimestamp : undefined
     const logInfo = plainToInstance(LogModel, {
       correlationId: ctx.correlationId,
       endpoint: request.url,
@@ -112,6 +113,7 @@ export class CustomLogger implements LoggerService {
       statusCode,
       httpStatusCode,
       header: this.sanitize(request.headers),
+      latencyMs,
     })
     this.logger.info(logInfo, 'api-log')
     return logInfo

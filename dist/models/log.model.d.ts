@@ -11,6 +11,7 @@ export declare class LogModel {
     statusCode?: string;
     httpStatusCode?: string;
     header?: string;
+    latencyMs?: number;
     toReadAbleFormat(): string;
 }
 //# sourceMappingURL=log.model.d.ts.map

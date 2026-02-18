@@ -91,6 +91,7 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
         if (request.url.includes('health-check'))
             return new log_model_1.LogModel();
         const ctx = this.getContext();
+        const latencyMs = ctx.requestTimestamp ? Date.now() - ctx.requestTimestamp : undefined;
         const logInfo = (0, class_transformer_1.plainToInstance)(log_model_1.LogModel, {
             correlationId: ctx.correlationId,
             endpoint: request.url,
@@ -102,6 +103,7 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
             statusCode,
             httpStatusCode,
             header: this.sanitize(request.headers),
+            latencyMs,
         });
         this.logger.info(logInfo, 'api-log');
         return logInfo;

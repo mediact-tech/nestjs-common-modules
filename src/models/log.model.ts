@@ -11,6 +11,7 @@ export class LogModel {
   statusCode?: string
   httpStatusCode?: string
   header?: string
+  latencyMs?: number
 
   toReadAbleFormat() {
     return [
@@ -20,6 +21,7 @@ export class LogModel {
       `MSG: ${this.message}`,
       `BODY: ${this.body}`,
       `STATUS: ${[this.httpStatusCode, this.statusCode].join(',')}`,
+      `LATENCY: ${this.latencyMs}ms`,
     ]
       .filter((e) => e?.length > 10)
       .join('\n')

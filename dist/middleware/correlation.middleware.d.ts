@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 export interface RequestContext {
     correlationId: string;
     userId?: string;
+    requestTimestamp: number;
 }
 export declare function getCorrelationId(): string | undefined;
 export declare function getUserId(): string | undefined;
@@ -12,5 +13,6 @@ export declare const correlationMiddleware: (fastify: FastifyInstance) => void;
 export declare function _getLoggerContext(): {
     correlationId?: string;
     userId?: string;
+    requestTimestamp?: number;
 };
 //# sourceMappingURL=correlation.middleware.d.ts.map
