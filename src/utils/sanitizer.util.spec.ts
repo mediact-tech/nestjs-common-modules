@@ -215,14 +215,14 @@ describe('Sanitizer Utility', () => {
     })
 
     describe('big body', () => {
-      it('should truncate body exceeding default max length (2048)', () => {
+      it('should truncate body exceeding default max length (4096)', () => {
         const bigBody = {
-          data: 'x'.repeat(3000),
+          data: 'x'.repeat(5000),
           metadata: { type: 'large' },
         }
         const result = sanitizePayload(bigBody)
 
-        expect(result.length).toBeLessThanOrEqual(2063) // 2048 + '...[TRUNCATED]'
+        expect(result.length).toBeLessThanOrEqual(4111) // 4096 + '...[TRUNCATED]'
         expect(result).toContain('...[TRUNCATED]')
       })
 

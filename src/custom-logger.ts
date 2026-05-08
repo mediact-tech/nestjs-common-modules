@@ -15,11 +15,7 @@ export class CustomLogger implements LoggerService {
   private readonly options: Required<Pick<LoggerModuleOptions, 'maxBodyLength' | 'sensitiveFields' | 'maskPattern'>>
   private readonly scope?: string
 
-  constructor(
-    @Optional() @Inject(LOGGER_MODULE_OPTIONS) options?: LoggerModuleOptions,
-    @Optional() parentLogger?: PinoLogger,
-    @Optional() scope?: string
-  ) {
+  constructor(@Optional() @Inject(LOGGER_MODULE_OPTIONS) options?: LoggerModuleOptions) {
     const opts = options || {}
     const serviceName = opts.serviceName || DEFAULT_SERVICE_NAME
     const logLevel = opts.logLevel || DEFAULT_LOG_LEVEL
@@ -27,7 +23,7 @@ export class CustomLogger implements LoggerService {
     const prettyPrint = opts.prettyPrint ?? environment === 'local'
 
     this.options = {
-      maxBodyLength: opts.maxBodyLength ?? 2048,
+      maxBodyLength: opts.maxBodyLength ?? 4096,
       sensitiveFields: opts.sensitiveFields ?? [
         'password', 'token', 'secret', 'authorization', 'apiKey', 'api_key',
         'accessToken', 'access_token', 'refreshToken', 'refresh_token',
@@ -36,32 +32,26 @@ export class CustomLogger implements LoggerService {
       maskPattern: opts.maskPattern ?? '[REDACTED]',
     }
 
-    this.scope = scope
-
-    if (parentLogger) {
-      this.logger = parentLogger.child({ scope })
-    } else {
-      this.logger = pino({
-        level: logLevel,
-        timestamp: pino.stdTimeFunctions.isoTime,
-        base: {
-          service: serviceName,
-          environment,
-          ...opts.baseMetadata,
-        },
-        redact: opts.redactPaths,
-        transport: prettyPrint
-          ? {
-              target: 'pino-pretty',
-              options: {
-                colorize: true,
-                translateTime: 'SYS:standard',
-                ignore: 'pid,hostname',
-              },
-            }
-          : undefined,
-      })
-    }
+    this.logger = pino({
+      level: logLevel,
+      timestamp: pino.stdTimeFunctions.isoTime,
+      base: {
+        service: serviceName,
+        environment,
+        ...opts.baseMetadata,
+      },
+      redact: opts.redactPaths,
+      transport: prettyPrint
+        ? {
+            target: 'pino-pretty',
+            options: {
+              colorize: true,
+              translateTime: 'SYS:standard',
+              ignore: 'pid,hostname',
+            },
+          }
+        : undefined,
+    })
   }
 
   /**
@@ -86,9 +76,9 @@ export class CustomLogger implements LoggerService {
     return _getLoggerContext()
   }
 
-  private sanitize(payload: unknown): string {
+  private sanitize(payload: unknown, skipTruncate = false): string {
     return sanitizePayload(payload, {
-      maxLength: this.options.maxBodyLength,
+      maxLength: skipTruncate ? Number.POSITIVE_INFINITY : this.options.maxBodyLength,
       sensitiveFields: this.options.sensitiveFields,
       maskPattern: this.options.maskPattern,
     })
@@ -97,22 +87,29 @@ export class CustomLogger implements LoggerService {
   /**
    * Log API request/response with automatic sanitization
    */
-  logApiRequestResponse(request: FastifyRequest, statusCode: string, httpStatusCode: number, data?: unknown): LogModel {
+  logApiRequestResponse(
+    request: FastifyRequest,
+    statusCode: string,
+    httpStatusCode: number,
+    data?: unknown,
+    options: { skipTruncate?: boolean } = {}
+  ): LogModel {
     if (request.url.includes('health-check')) return new LogModel()
 
+    const { skipTruncate = false } = options
     const ctx = this.getContext()
     const latencyMs = ctx.requestTimestamp ? Date.now() - ctx.requestTimestamp : undefined
     const logInfo = plainToInstance(LogModel, {
       correlationId: ctx.correlationId,
       endpoint: request.url,
       method: request.method,
-      body: this.sanitize(request.body),
-      param: this.sanitize(request.query),
-      response: this.sanitize(data),
+      body: this.sanitize(request.body, skipTruncate),
+      param: this.sanitize(request.query, skipTruncate),
+      response: this.sanitize(data, skipTruncate),
       userId: ctx.userId,
       statusCode,
       httpStatusCode,
-      header: this.sanitize(request.headers),
+      header: this.sanitize(request.headers, skipTruncate),
       latencyMs,
     })
     this.logger.info(logInfo, 'api-log')

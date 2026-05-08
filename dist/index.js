@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_MAX_BODY_LENGTH = exports.DEFAULT_MASK_PATTERN = exports.DEFAULT_SENSITIVE_FIELDS = exports.maskSensitiveData = exports.safeStringify = exports.sanitizePayload = exports.EXCLUDE_RESPONSE_LOGGER_KEY = exports.ExcludeResponseLogger = exports.SwaggerApiResponse = exports.ResponseStatusCode = exports.BussinessException = exports.CustomResponse = exports.CustomResponseInterceptor = exports.LoggingInterceptor = exports.AllExceptionsFilter = exports.CORRELATION_ID_HEADER = exports.getRequestContext = exports.setUserId = exports.getUserId = exports.getCorrelationId = exports.correlationMiddleware = exports.DEFAULT_ENVIRONMENT = exports.DEFAULT_SERVICE_NAME = exports.DEFAULT_LOG_LEVEL = exports.LOGGER_MODULE_OPTIONS = exports.LogModel = exports.CustomLogger = exports.HttpModule = exports.CustomLoggerModule = void 0;
+exports.DEFAULT_MAX_BODY_LENGTH = exports.DEFAULT_MASK_PATTERN = exports.DEFAULT_SENSITIVE_FIELDS = exports.maskSensitiveData = exports.safeStringify = exports.sanitizePayload = exports.EXCLUDE_API_LOG_TRUNCATE_KEY = exports.ExcludeApiLogTruncate = exports.EXCLUDE_RESPONSE_LOGGER_KEY = exports.ExcludeResponseLogger = exports.SwaggerApiResponse = exports.ResponseStatusCode = exports.BussinessException = exports.CustomResponse = exports.CustomResponseInterceptor = exports.LoggingInterceptor = exports.AllExceptionsFilter = exports.CORRELATION_ID_HEADER = exports.getRequestContext = exports.setUserId = exports.getUserId = exports.getCorrelationId = exports.correlationMiddleware = exports.DEFAULT_ENVIRONMENT = exports.DEFAULT_SERVICE_NAME = exports.DEFAULT_LOG_LEVEL = exports.LOGGER_MODULE_OPTIONS = exports.LogModel = exports.CustomLogger = exports.HttpModule = exports.CustomLoggerModule = void 0;
 var custom_logger_module_1 = require("./custom-logger.module");
 Object.defineProperty(exports, "CustomLoggerModule", { enumerable: true, get: function () { return custom_logger_module_1.CustomLoggerModule; } });
 var custom_http_module_1 = require("./custom-http.module");
@@ -36,6 +36,9 @@ Object.defineProperty(exports, "SwaggerApiResponse", { enumerable: true, get: fu
 var exclude_response_logger_decorator_1 = require("./decorators/exclude-response-logger.decorator");
 Object.defineProperty(exports, "ExcludeResponseLogger", { enumerable: true, get: function () { return exclude_response_logger_decorator_1.ExcludeResponseLogger; } });
 Object.defineProperty(exports, "EXCLUDE_RESPONSE_LOGGER_KEY", { enumerable: true, get: function () { return exclude_response_logger_decorator_1.EXCLUDE_RESPONSE_LOGGER_KEY; } });
+var exclude_api_log_truncate_decorator_1 = require("./decorators/exclude-api-log-truncate.decorator");
+Object.defineProperty(exports, "ExcludeApiLogTruncate", { enumerable: true, get: function () { return exclude_api_log_truncate_decorator_1.ExcludeApiLogTruncate; } });
+Object.defineProperty(exports, "EXCLUDE_API_LOG_TRUNCATE_KEY", { enumerable: true, get: function () { return exclude_api_log_truncate_decorator_1.EXCLUDE_API_LOG_TRUNCATE_KEY; } });
 var sanitizer_util_1 = require("./utils/sanitizer.util");
 Object.defineProperty(exports, "sanitizePayload", { enumerable: true, get: function () { return sanitizer_util_1.sanitizePayload; } });
 Object.defineProperty(exports, "safeStringify", { enumerable: true, get: function () { return sanitizer_util_1.safeStringify; } });

@@ -11,5 +11,6 @@ export { CustomResponseInterceptor } from "./interceptors/response.interceptor";
 export { CustomResponse, BussinessException, ResponseStatusCode, } from "./interceptors/models/custom-response.model";
 export { SwaggerApiResponse } from "./decorators/response-swagger-doc.decorator";
 export { ExcludeResponseLogger, EXCLUDE_RESPONSE_LOGGER_KEY } from "./decorators/exclude-response-logger.decorator";
+export { ExcludeApiLogTruncate, EXCLUDE_API_LOG_TRUNCATE_KEY } from "./decorators/exclude-api-log-truncate.decorator";
 export { sanitizePayload, safeStringify, maskSensitiveData, DEFAULT_SENSITIVE_FIELDS, DEFAULT_MASK_PATTERN, DEFAULT_MAX_BODY_LENGTH, } from "./utils/sanitizer.util";
 //# sourceMappingURL=index.d.ts.map

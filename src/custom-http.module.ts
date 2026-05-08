@@ -2,12 +2,11 @@ import { HttpModule as AxiosHttpModule, HttpService } from '@nestjs/axios'
 import { Global, Module, OnModuleInit } from '@nestjs/common'
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { CustomLogger } from './custom-logger'
-import { getCorrelationId } from './middleware/correlation.middleware'
+import { CORRELATION_ID_HEADER, getCorrelationId } from './middleware/correlation.middleware'
 
 @Global()
 @Module({
   imports: [AxiosHttpModule],
-  providers: [CustomLogger],
   exports: [AxiosHttpModule],
 })
 export class HttpModule extends AxiosHttpModule implements OnModuleInit {
@@ -38,7 +37,10 @@ export class HttpModule extends AxiosHttpModule implements OnModuleInit {
   }
 
   private onRequest(config: InternalAxiosRequestConfig<any>) {
-    config.headers['correlationId'] = getCorrelationId()
+    const correlationId = getCorrelationId()
+    if (correlationId) {
+      config.headers[CORRELATION_ID_HEADER] = correlationId
+    }
     return config
   }
 

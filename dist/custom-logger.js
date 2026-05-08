@@ -25,14 +25,14 @@ const logger_constants_1 = require("./constants/logger.constants");
 const sanitizer_util_1 = require("./utils/sanitizer.util");
 const correlation_middleware_1 = require("./middleware/correlation.middleware");
 let CustomLogger = CustomLogger_1 = class CustomLogger {
-    constructor(options, parentLogger, scope) {
+    constructor(options) {
         const opts = options || {};
         const serviceName = opts.serviceName || logger_constants_1.DEFAULT_SERVICE_NAME;
         const logLevel = opts.logLevel || logger_constants_1.DEFAULT_LOG_LEVEL;
         const environment = opts.environment || logger_constants_1.DEFAULT_ENVIRONMENT;
         const prettyPrint = opts.prettyPrint ?? environment === 'local';
         this.options = {
-            maxBodyLength: opts.maxBodyLength ?? 2048,
+            maxBodyLength: opts.maxBodyLength ?? 4096,
             sensitiveFields: opts.sensitiveFields ?? [
                 'password', 'token', 'secret', 'authorization', 'apiKey', 'api_key',
                 'accessToken', 'access_token', 'refreshToken', 'refresh_token',
@@ -40,32 +40,26 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
             ],
             maskPattern: opts.maskPattern ?? '[REDACTED]',
         };
-        this.scope = scope;
-        if (parentLogger) {
-            this.logger = parentLogger.child({ scope });
-        }
-        else {
-            this.logger = (0, pino_1.default)({
-                level: logLevel,
-                timestamp: pino_1.default.stdTimeFunctions.isoTime,
-                base: {
-                    service: serviceName,
-                    environment,
-                    ...opts.baseMetadata,
-                },
-                redact: opts.redactPaths,
-                transport: prettyPrint
-                    ? {
-                        target: 'pino-pretty',
-                        options: {
-                            colorize: true,
-                            translateTime: 'SYS:standard',
-                            ignore: 'pid,hostname',
-                        },
-                    }
-                    : undefined,
-            });
-        }
+        this.logger = (0, pino_1.default)({
+            level: logLevel,
+            timestamp: pino_1.default.stdTimeFunctions.isoTime,
+            base: {
+                service: serviceName,
+                environment,
+                ...opts.baseMetadata,
+            },
+            redact: opts.redactPaths,
+            transport: prettyPrint
+                ? {
+                    target: 'pino-pretty',
+                    options: {
+                        colorize: true,
+                        translateTime: 'SYS:standard',
+                        ignore: 'pid,hostname',
+                    },
+                }
+                : undefined,
+        });
     }
     child(scope, extraMeta) {
         const childPino = this.logger.child({ scope, ...extraMeta });
@@ -80,29 +74,30 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
     getContext() {
         return (0, correlation_middleware_1._getLoggerContext)();
     }
-    sanitize(payload) {
+    sanitize(payload, skipTruncate = false) {
         return (0, sanitizer_util_1.sanitizePayload)(payload, {
-            maxLength: this.options.maxBodyLength,
+            maxLength: skipTruncate ? Number.POSITIVE_INFINITY : this.options.maxBodyLength,
             sensitiveFields: this.options.sensitiveFields,
             maskPattern: this.options.maskPattern,
         });
     }
-    logApiRequestResponse(request, statusCode, httpStatusCode, data) {
+    logApiRequestResponse(request, statusCode, httpStatusCode, data, options = {}) {
         if (request.url.includes('health-check'))
             return new log_model_1.LogModel();
+        const { skipTruncate = false } = options;
         const ctx = this.getContext();
         const latencyMs = ctx.requestTimestamp ? Date.now() - ctx.requestTimestamp : undefined;
         const logInfo = (0, class_transformer_1.plainToInstance)(log_model_1.LogModel, {
             correlationId: ctx.correlationId,
             endpoint: request.url,
             method: request.method,
-            body: this.sanitize(request.body),
-            param: this.sanitize(request.query),
-            response: this.sanitize(data),
+            body: this.sanitize(request.body, skipTruncate),
+            param: this.sanitize(request.query, skipTruncate),
+            response: this.sanitize(data, skipTruncate),
             userId: ctx.userId,
             statusCode,
             httpStatusCode,
-            header: this.sanitize(request.headers),
+            header: this.sanitize(request.headers, skipTruncate),
             latencyMs,
         });
         this.logger.info(logInfo, 'api-log');
@@ -201,8 +196,6 @@ exports.CustomLogger = CustomLogger = CustomLogger_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Optional)()),
     __param(0, (0, common_1.Inject)(logger_constants_1.LOGGER_MODULE_OPTIONS)),
-    __param(1, (0, common_1.Optional)()),
-    __param(2, (0, common_1.Optional)()),
-    __metadata("design:paramtypes", [Object, Object, String])
+    __metadata("design:paramtypes", [Object])
 ], CustomLogger);
 //# sourceMappingURL=custom-logger.js.map

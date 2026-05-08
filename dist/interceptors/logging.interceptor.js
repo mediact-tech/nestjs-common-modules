@@ -15,6 +15,7 @@ const core_1 = require("@nestjs/core");
 const operators_1 = require("rxjs/operators");
 const custom_logger_1 = require("../custom-logger");
 const exclude_response_logger_decorator_1 = require("../decorators/exclude-response-logger.decorator");
+const exclude_api_log_truncate_decorator_1 = require("../decorators/exclude-api-log-truncate.decorator");
 let LoggingInterceptor = class LoggingInterceptor {
     constructor(customLogger, reflector) {
         this.customLogger = customLogger;
@@ -22,12 +23,13 @@ let LoggingInterceptor = class LoggingInterceptor {
     }
     intercept(context, next) {
         const excludeResponseLogger = this.reflector.getAllAndOverride(exclude_response_logger_decorator_1.EXCLUDE_RESPONSE_LOGGER_KEY, [context.getHandler(), context.getClass()]);
+        const excludeApiLogTruncate = this.reflector.getAllAndOverride(exclude_api_log_truncate_decorator_1.EXCLUDE_API_LOG_TRUNCATE_KEY, [context.getHandler(), context.getClass()]);
         const http = context.switchToHttp();
         const request = http.getRequest();
         const response = http.getResponse();
         return next
             .handle()
-            .pipe((0, operators_1.tap)((data) => this.customLogger.logApiRequestResponse(request, data.status, response.statusCode, excludeResponseLogger ? undefined : data)));
+            .pipe((0, operators_1.tap)((data) => this.customLogger.logApiRequestResponse(request, data.status, response.statusCode, excludeResponseLogger ? undefined : data, { skipTruncate: excludeApiLogTruncate })));
     }
 };
 exports.LoggingInterceptor = LoggingInterceptor;

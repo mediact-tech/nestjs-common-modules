@@ -6,6 +6,7 @@ import { CustomLogger } from '../custom-logger'
 import { CustomResponse } from './models/custom-response.model'
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { EXCLUDE_RESPONSE_LOGGER_KEY } from '../decorators/exclude-response-logger.decorator'
+import { EXCLUDE_API_LOG_TRUNCATE_KEY } from '../decorators/exclude-api-log-truncate.decorator'
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -17,6 +18,10 @@ export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const excludeResponseLogger = this.reflector.getAllAndOverride<boolean>(
       EXCLUDE_RESPONSE_LOGGER_KEY,
+      [context.getHandler(), context.getClass()]
+    )
+    const excludeApiLogTruncate = this.reflector.getAllAndOverride<boolean>(
+      EXCLUDE_API_LOG_TRUNCATE_KEY,
       [context.getHandler(), context.getClass()]
     )
 
@@ -32,7 +37,8 @@ export class LoggingInterceptor implements NestInterceptor {
             request,
             data.status,
             response.statusCode,
-            excludeResponseLogger ? undefined : data
+            excludeResponseLogger ? undefined : data,
+            { skipTruncate: excludeApiLogTruncate }
           )
         )
       )

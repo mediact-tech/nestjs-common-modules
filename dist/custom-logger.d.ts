@@ -8,11 +8,13 @@ export declare class CustomLogger implements LoggerService {
     readonly logger: PinoLogger;
     private readonly options;
     private readonly scope?;
-    constructor(options?: LoggerModuleOptions, parentLogger?: PinoLogger, scope?: string);
+    constructor(options?: LoggerModuleOptions);
     child(scope: string, extraMeta?: Record<string, unknown>): CustomLogger;
     private getContext;
     private sanitize;
-    logApiRequestResponse(request: FastifyRequest, statusCode: string, httpStatusCode: number, data?: unknown): LogModel;
+    logApiRequestResponse(request: FastifyRequest, statusCode: string, httpStatusCode: number, data?: unknown, options?: {
+        skipTruncate?: boolean;
+    }): LogModel;
     logAxiosHttpResponse(res?: AxiosResponse): LogModel;
     log(message: string, meta?: Record<string, unknown>): void;
     info(message: string, meta?: Record<string, unknown>): void;

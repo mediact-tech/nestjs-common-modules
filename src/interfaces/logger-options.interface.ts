@@ -32,7 +32,7 @@ export interface LoggerModuleOptions {
   /**
    * Maximum length for request/response body in logs (in characters)
    * Bodies exceeding this limit will be truncated
-   * @default 2048
+   * @default 4096
    */
   maxBodyLength?: number
 

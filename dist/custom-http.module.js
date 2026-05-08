@@ -35,7 +35,10 @@ let HttpModule = class HttpModule extends axios_1.HttpModule {
         });
     }
     onRequest(config) {
-        config.headers['correlationId'] = (0, correlation_middleware_1.getCorrelationId)();
+        const correlationId = (0, correlation_middleware_1.getCorrelationId)();
+        if (correlationId) {
+            config.headers[correlation_middleware_1.CORRELATION_ID_HEADER] = correlationId;
+        }
         return config;
     }
     onResponse(res) {
@@ -48,7 +51,6 @@ exports.HttpModule = HttpModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
         imports: [axios_1.HttpModule],
-        providers: [custom_logger_1.CustomLogger],
         exports: [axios_1.HttpModule],
     }),
     __metadata("design:paramtypes", [axios_1.HttpService, custom_logger_1.CustomLogger])
