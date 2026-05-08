@@ -1,6 +1,6 @@
 {
   "name": "nestjs-common-modules",
-  "version": "1.1.3",
+  "version": "1.2.0",
   "description": "A strict, production-ready logging module for NestJS applications with Fastify, built on Pino",
   "author": "",
   "license": "MIT",
