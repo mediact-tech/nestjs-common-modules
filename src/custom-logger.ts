@@ -125,10 +125,10 @@ export class CustomLogger implements LoggerService {
       correlationId: (res?.config?.headers?.[CORRELATION_ID_HEADER] as string) ?? ctx.correlationId,
       endpoint: res?.config?.url,
       method: res?.config?.method?.toUpperCase(),
-      body: this.sanitize(res?.config?.data),
-      param: this.sanitize(res?.config?.params),
+      body: this.sanitize(res?.config?.data, true),
+      param: this.sanitize(res?.config?.params, true),
       userId: ctx.userId,
-      response: this.sanitize(res?.data),
+      response: this.sanitize(res?.data, true),
       httpStatusCode: res?.status,
       header: this.sanitize(res?.config?.headers),
     })
